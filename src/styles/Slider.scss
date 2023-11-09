@@ -1,0 +1,130 @@
+@import 'MediaQueries';
+
+.slider-container {
+    margin-top: 70px;
+    min-height: 600px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #8BC6EC;
+    background-image: linear-gradient(135deg, #8BC6EC 0%, #9599E2 100%);
+
+    .txt-container {
+        text-align: center;
+
+        h1 {
+            color: #fff;
+        }
+
+        p {
+            color: #fff;
+            margin-bottom: 35px;
+        }
+    }
+
+}
+
+.slider-container-small {
+    margin-top: 70px;
+    min-height: 300px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #8BC6EC;
+    background-image: linear-gradient(135deg, #8BC6EC 0%, #9599E2 100%);
+
+    .txt-container {
+        text-align: center;
+
+        h1 {
+            color: #fff;
+        }
+
+        p {
+            color: #fff;
+            margin-bottom: 35px;
+        }
+    }
+
+}
+
+/* Image slider */
+
+
+.image-slider-container {
+    position: relative;
+    overflow: hidden;
+
+    .img-fluid {
+        object-fit: cover;
+        max-height: 100vh;
+        width: 100%;
+    }
+
+    .slider-txt {
+        position: absolute;
+        bottom: 175px;
+        left: 50px;
+        width: 40%;
+        color: #fff;
+        pointer-events: all;
+        @include md {
+            bottom: 70px;
+            left: 30px;
+        }
+    }
+}
+
+.image-slider-container-small {
+    position: relative;
+    overflow: hidden;
+
+    .img-fluid {
+        object-fit: cover;
+        max-height: 50vh;
+        width: 100%;
+    }
+
+    .slider-txt {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 0;
+        bottom: 0;
+        margin: auto;
+        color: #fff;
+        pointer-events: all;
+        height: fit-content;
+        width: fit-content;
+        max-width: 600px;
+        text-align: center;
+    }
+}
+
+.slider-btn {
+    background-color: #fff;
+    border-radius: 10px;
+    color: #000;
+    cursor: pointer;
+    padding: 15px 30px;
+    font-size: 18px;
+    font-weight: bold;
+    letter-spacing: 1px;
+    border: none;
+    text-decoration: none;
+    margin-top: 20px;
+
+    &:hover {
+        background-image: linear-gradient(90deg, #53cbef 0%, #dcc66c 50%, #ffa3b6 75%, #53cbef 100%);
+        animation: slidernbw 5s linear infinite;
+        color: #000;
+    }
+
+    @keyframes slidernbw {
+        to {
+            background-position: 20vw;
+        }
+    }
+}
+
+/* Image slider */

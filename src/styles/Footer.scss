@@ -1,0 +1,18 @@
+.footer-container {
+    height: 40px;
+    background-color: #000000;
+    color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    /* bottom: -48px; */
+    right: 0;
+    left: 0;
+
+    p {
+        font-size: 13px;
+        margin-bottom: 0px;
+
+    }
+}
