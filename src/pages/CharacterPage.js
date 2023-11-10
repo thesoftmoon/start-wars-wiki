@@ -18,6 +18,10 @@ function CharacterPage() {
   const [displayDialog, setDisplayDialog] = useState(false);
   const [secondApiData, setSecondApiData] = useState(null);
 
+  const [nextPageUrl, setNextPageUrl] = useState('');
+  const [prevPageUrl, setPrevPageUrl] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+
   const [filters, setFilters] = useState({
     global: { value: null, matchMode: FilterMatchMode.CONTAINS }
   });
@@ -46,11 +50,27 @@ function CharacterPage() {
   };
 
   useEffect(() => {
-    (async () => {
-      const { data } = await axios.get(`https://swapi.dev/api/people/`)
-      setData(data);
-    })();
+    fetchData('https://swapi.dev/api/people/');
   }, []);
+
+  const fetchData = async (url) => {
+    Swal.fire({
+      title: 'Cargando',
+      text: 'Por favor, espera...',
+      allowOutsideClick: false,
+      showConfirmButton: false,
+    });
+    Swal.showLoading();
+    try {
+      const response = await axios.get(url);
+      setData(response.data.results);
+      setNextPageUrl(response.data.next);
+      setPrevPageUrl(response.data.previous);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+    Swal.close();
+  };
 
   const onGlobalFilterChange = (e) => {
     const value = e.target.value;
@@ -101,39 +121,58 @@ function CharacterPage() {
 
   const header = renderHeader();
 
+  const handleNext = () => {
+    if (nextPageUrl) {
+      fetchData(nextPageUrl);
+      setCurrentPage((prev) => prev + 1);
+    }
+  };
+
+  const handlePrev = () => {
+    if (prevPageUrl) {
+      fetchData(prevPageUrl);
+      setCurrentPage((prev) => prev - 1);
+    }
+  };
+
   return (
     <Layout>
       <ImageSlider
-        moImage={'/img/hero-banner-characters-mo.jpg'}
+        moImage={'/img/hero-banner-section-characters-mo.jpg'}
         pcImage={'/img/hero-banner-section-characters-pc.jpg'}
         title={'Personajes'}
         sliderSize={'small'}
         text={'Conoce los personajes más icónicos del universo Star Wars'}
       />
-      {data.results ? (
+      {data.length > 0 ? (
         <div className="row d-flex justify-content-center my-4">
-        <div className="col-12 col-md-8">
-          <DataTable
-            value={data.results}
-            tableStyle={{ minWidth: '50rem' }}
-            paginator
-            paginatorTemplate="CurrentPageReport FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink"
-            rows={5}
-            dataKey="id" filters={filters}
-            header={header} emptyMessage="No encontrado..."
-          >
-            <Column field="name" header="Nombre"></Column>
-            <Column header="Detalles" body={viewMoreBodyTemplate} />
-          </DataTable>
+          <div className="col-12 col-md-8">
+            <DataTable
+              value={data}
+              tableStyle={{ minWidth: '50rem' }}
+              dataKey="id" filters={filters}
+              header={header} emptyMessage="No encontrado..."
+            >
+              <Column field="name" header="Nombre"></Column>
+              <Column header="Detalles" body={viewMoreBodyTemplate} />
+            </DataTable>
 
-          <Dialog
-            visible={displayDialog}
-            onHide={() => setDisplayDialog(false)}
-            header="Detalles"
-          >
-            {detailsTemplate()}
-          </Dialog>
-        </div>
+            <Dialog
+              visible={displayDialog}
+              onHide={() => setDisplayDialog(false)}
+              header="Detalles"
+            >
+              {detailsTemplate()}
+            </Dialog>
+          </div>
+
+          <div className='row'>
+            <div className='col-12 d-flex align-items-center justify-content-center'>
+              <Button label="Anterior" onClick={handlePrev} disabled={!prevPageUrl} />
+              <span className='mx-3'>Página {currentPage}</span>
+              <Button label="Siguiente" onClick={handleNext} disabled={!nextPageUrl} />
+            </div>
+          </div>
         </div>
       ) : (
         <div className='d-flex align-items-center justify-content-center h-100'><h1>Cargando...</h1></div>

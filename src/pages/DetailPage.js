@@ -3,48 +3,49 @@ import Layout from '../layout/Layout'
 import ImageSlider from '../components/ImageSlider'
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
+import Swal from 'sweetalert2';
 
 function DetailPage() {
 
     const { id } = useParams();
     const [data, setData] = useState(null);
-    const [planet, setPlanet] = useState(null);
+
 
     useEffect(() => {
-        axios
-            .get(`https://swapi.dev/api/people/${[id]}`)
-            .then((res) => {
-                const personData = res.data;
-                setData(personData);
-                if (personData && personData.homeworld) {
-                    return axios.get(personData.homeworld);
-                } else {
-                    throw new Error("La URL no está disponible.");
-                }
-            })
-            .then((res) => {
-                const planetData = res.data;
-                setPlanet(planetData);
-            })
-            .catch((err) => {
-                console.log('error al cargar la data' + err)
-                setData(null);
-            });
-    }, [id]);
+        fetchData(`https://swapi.dev/api/people/${id}`);
+      }, []);
+      
+      const fetchData = async (url) => {
+        try {
+          Swal.fire({
+            title: 'Cargando',
+            text: 'Por favor, espera...',
+            allowOutsideClick: false,
+            showConfirmButton: false,
+          });
+          Swal.showLoading();
+      
+          const response = await axios.get(url);
+          setData(response.data);
+      
+          Swal.close();
+        } catch (error) {
+          console.error('Error fetching data:', error);
+          Swal.close();
+        }
+      };
+    
 
-    if (data == null && planet == null) {
+    if (data == null) {
         return (
             <Layout>
                 <ImageSlider
                     moImage={'/img/hero-banner-characters-mo.jpg'}
                     pcImage={'/img/hero-banner-section-characters-pc.jpg'}
-                    title={'Personajes'}
+                    title={'Cargando personaje'}
                     sliderSize={'small'}
-                    text={'Conoce los personajes más icónicos del universo Star Wars'}
-                    btn={false}
-                    btnLink={'/characters'}
                 />
-                Cargando...
+                <div className='d-flex align-items-center justify-content-center h-100'><h1>Cargando...</h1></div>
             </Layout>
         )
     }
@@ -68,9 +69,6 @@ function DetailPage() {
                         <li className="list-group-item">Color de ojos: <strong>{data.eye_color}</strong></li>
                         <li className="list-group-item">Año de nacimiento: <strong>{data.birth_year}</strong></li>
                         <li className="list-group-item">Genero: <strong>{data.gender}</strong></li>
-                        {planet &&
-                            <li className="list-group-item">Planeta: <strong>{planet.name}</strong></li>
-                        }
                     </ul>
                 </div>
             </div>

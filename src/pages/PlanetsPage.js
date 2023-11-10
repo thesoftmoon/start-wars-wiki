@@ -11,13 +11,16 @@ import { Dialog } from 'primereact/dialog';
 import Swal from 'sweetalert2';
 import { Link } from 'react-router-dom';
 
-
 function CharacterPage() {
 
   const [data, setData] = useState([]);
   const [selectedItem, setSelectedItem] = useState(null);
   const [displayDialog, setDisplayDialog] = useState(false);
   const [secondApiData, setSecondApiData] = useState(null);
+
+  const [nextPageUrl, setNextPageUrl] = useState('');
+  const [prevPageUrl, setPrevPageUrl] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
 
   const [filters, setFilters] = useState({
     global: { value: null, matchMode: FilterMatchMode.CONTAINS }
@@ -29,8 +32,6 @@ function CharacterPage() {
     const parts = url.split('/');
     return parts[parts.length - 2];
   }
-
-
 
   const detailsTemplate = () => {
     if (secondApiData) {
@@ -45,14 +46,16 @@ function CharacterPage() {
 
       return (
         <div>
-          <ul>
-            {/* {filteredData.map((item, index) => (
-              <li key={index}>
-                {item.name}
-                <Link to={`/characters/${extractUrl(item.url)}`}>Ver Detalles</Link>
-              </li>
-            ))} */}
-          </ul>
+          <div>
+            {filteredData.map((item, index) => (
+              <div className='row my-3' key={index}>
+                <div className='col-12 col-12 d-flex justify-content-between align-items-center'>
+                  <p className='mb-0'>{item.name}</p>
+                  <Link className='primary-btn black' to={`/characters/${extractUrl(item.url)}`}>Ver Detalles</Link>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       );
     }
@@ -60,11 +63,27 @@ function CharacterPage() {
   };
 
   useEffect(() => {
-    (async () => {
-      const { data } = await axios.get(`https://swapi.dev/api/planets/`)
-      setData(data);
-    })();
+    fetchData(`https://swapi.dev/api/planets/`);
   }, []);
+
+  const fetchData = async (url) => {
+    Swal.fire({
+      title: 'Cargando',
+      text: 'Por favor, espera...',
+      allowOutsideClick: false,
+      showConfirmButton: false,
+    });
+    Swal.showLoading();
+    try {
+      const response = await axios.get(url);
+      setData(response.data.results);
+      setNextPageUrl(response.data.next);
+      setPrevPageUrl(response.data.previous);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+    Swal.close();
+  };
 
   const onGlobalFilterChange = (e) => {
     const value = e.target.value;
@@ -113,26 +132,37 @@ function CharacterPage() {
     );
   };
 
+  const handleNext = () => {
+    if (nextPageUrl) {
+      fetchData(nextPageUrl);
+      setCurrentPage((prev) => prev + 1);
+    }
+  };
+
+  const handlePrev = () => {
+    if (prevPageUrl) {
+      fetchData(prevPageUrl);
+      setCurrentPage((prev) => prev - 1);
+    }
+  };
+
   const header = renderHeader();
 
   return (
     <Layout>
       <ImageSlider
-        moImage={'/img/hero-banner-characters-mo.jpg'}
+        moImage={'/img/hero-banner-section-planets-mo.jpg'}
         pcImage={'/img/hero-banner-section-planets-pc.jpg'}
         title={'Planetas'}
         sliderSize={'small'}
         text={'Las locaciones más icónicas, conócelas todas'}
       />
-      {data.results ? (
+      {data.length > 0 ? (
         <div className="row d-flex justify-content-center my-4">
           <div className="col-12">
             <DataTable
-              value={data.results}
+              value={data}
               tableStyle={{ minWidth: '50rem' }}
-              paginator
-              paginatorTemplate="CurrentPageReport FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink"
-              rows={5}
               dataKey="id" filters={filters}
               header={header} emptyMessage="No encontrado..."
             >
@@ -156,11 +186,16 @@ function CharacterPage() {
               {detailsTemplate()}
             </Dialog>
           </div>
+          <div className='row'>
+            <div className='col-12 d-flex align-items-center justify-content-center'>
+              <Button label="Anterior" onClick={handlePrev} disabled={!prevPageUrl} />
+              <span className='mx-3'>Página {currentPage}</span>
+              <Button label="Siguiente" onClick={handleNext} disabled={!nextPageUrl} />
+            </div>
+          </div>
         </div>
       ) : (
         <div className='d-flex align-items-center justify-content-center h-100'><h1>Cargando...</h1></div>
-
-
       )}
     </Layout>
   )

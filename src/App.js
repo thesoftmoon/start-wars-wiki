@@ -1,6 +1,5 @@
 import './styles/Global.scss';
-import { Routes, Route, useParams, Navigate } from "react-router-dom";
-import { PrimeReactProvider, PrimeReactContext } from 'primereact/api';
+import { Routes, Route} from "react-router-dom";
 import "primereact/resources/themes/lara-light-indigo/theme.css";
 import 'primeicons/primeicons.css';
         

@@ -15,7 +15,7 @@ function HomePage() {
       />
 
 <ImageSlider
-        moImage={'/img/test-img-mo.jpg'}
+        moImage={'/img/hero-banner-ships-mo.jpg'}
         pcImage={'/img/hero-banner-ships-pc.jpg'}
         title={'Naves'}
         text={'Impresiónate por las más conocidas de las naves en la saga'}
@@ -24,7 +24,7 @@ function HomePage() {
       />
 
 <ImageSlider
-        moImage={'/img/test-img-mo.jpg'}
+        moImage={'/img/hero-banner-planets-mo.jpg'}
         pcImage={'/img/hero-banner-planets-pc.jpg'}
         title={'Planetas'}
         text={'Las locaciones más icónicas, conócelas todas'}

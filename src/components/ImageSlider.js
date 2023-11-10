@@ -8,7 +8,7 @@ function ImageSlider(props) {
       <div className='slider-txt'>
         <h1>{props.title}</h1>
         <p className='mb-4'>{props.text}</p>
-        {props.btn === true && <Link className='slider-btn' to={props.btnLink}>Ver más</Link>}
+        {props.btn === true && <Link className='primary-btn' to={props.btnLink}>Ver más</Link>}
 
       </div>
       <img src={props.moImage} className='img-fluid d-flex d-md-none' alt='...'></img>
