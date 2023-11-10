@@ -1,6 +1,6 @@
 # Star Wars Wiki
 
-## Como correr el proyecto
+**Como correr el proyecto**
 
 En el directorio del proyecto
 
